@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Propuesta Digital Visual - Asociación Justicia Para Las Naciones</title>
-    <!-- React & Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -16,14 +14,15 @@
                 extend: {
                     colors: {
                         brand: {
-                            night: '#0A1E36',
-                            deep: '#123B61',
-                            gold: '#C6A15B',
+                            // Nueva paleta basada en el Cielo y las Nubes
+                            corporate: '#082F49', /* Azul Marino profundo para textos legibles */
+                            skyDeep: '#0284C7',   /* Azul Cielo Intenso */
+                            sky: '#38BDF8',       /* Azul Cielo Claro */
+                            cloud: '#F0F9FF',     /* Blanco Nube / Celeste muy pálido */
+                            white: '#FFFFFF',     /* Blanco puro */
+                            gold: '#C6A15B',      /* Dorado (Luz de sol) */
                             goldHover: '#B28E49',
-                            ivory: '#F5F1E8',
-                            olive: '#697255',
-                            slate: '#1E293B',
-                            softGray: '#F8FAFC'
+                            olive: '#697255',     /* Verde olivo (Tierra/Misión) */
                         }
                     },
                     fontFamily: {
@@ -34,15 +33,14 @@
             }
         }
     </script>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Manrope', sans-serif;
-            background-color: #0A1E36;
-            color: #F5F1E8;
+            background-color: #F0F9FF; /* Fondo Cloud general */
+            color: #082F49; /* Texto Corporate oscuro para contraste */
             margin: 0;
             padding: 0;
             overflow-x: hidden;
@@ -51,25 +49,40 @@
             font-family: 'Cormorant Garamond', Georgia, serif;
         }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #E6CA85 0%, #C6A15B 50%, #9A7B39 100%);
+            background: linear-gradient(135deg, #C6A15B 0%, #9A7B39 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sky-gradient-text {
+            background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .gold-gradient-bg {
             background: linear-gradient(135deg, #D4B26F 0%, #C6A15B 50%, #B28E49 100%);
+            color: #FFFFFF;
+        }
+        .cloud-gradient-bg {
+            background: linear-gradient(to bottom, #FFFFFF 0%, #F0F9FF 100%);
         }
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0A1E36;
+            background: #F0F9FF;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #123B61;
-            border-radius: 3px;
+            background: #93C5FD;
+            border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #C6A15B;
+            background: #38BDF8;
+        }
+        /* Efecto de nube sutil de fondo */
+        .cloud-pattern {
+            background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 60%),
+                              radial-gradient(circle at 80% 20%, rgba(255,255,255,0.6) 0%, transparent 50%);
+            background-size: 100% 100%;
         }
     </style>
 </head>
@@ -79,7 +92,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- ICON COMPONENTS ---
         const IconShield = ({ size = 20, className = "" }) => (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -120,13 +132,6 @@
             </svg>
         );
 
-        const IconSearch = ({ size = 20, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-        );
-
         const IconFileText = ({ size = 20, className = "" }) => (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -164,54 +169,49 @@
             </svg>
         );
 
-        const IconUsers = ({ size = 20, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-        );
-
-        // --- BRAND LOGO COMPONENT (ESCUDO + HORIZONTE + CAMINO + NACIONES) ---
         const BrandLogo = ({ size = "md", showSubtitle = true }) => {
             const dims = size === "sm" ? "w-8 h-8" : size === "lg" ? "w-16 h-16" : "w-11 h-11";
             return (
                 <div className="flex items-center gap-3">
-                    <div className={`${dims} rounded-lg bg-gradient-to-br from-brand-deep via-brand-night to-black p-0.5 shadow-lg border border-brand-gold/40 flex items-center justify-center relative group overflow-hidden`}>
-                        <div className="absolute inset-0 bg-brand-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Contenedor del Logo con gradiente de cielo despejado */}
+                    <div className={`${dims} rounded-lg bg-gradient-to-br from-brand-sky via-brand-skyDeep to-brand-corporate p-0.5 shadow-lg shadow-brand-sky/30 border border-brand-sky/20 flex items-center justify-center relative group overflow-hidden`}>
+                        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <svg viewBox="0 0 100 100" className="w-full h-full p-1.5" fill="none" xmlns="http://www.w3.org/2000/svg">
                             {/* Shield Outline */}
-                            <path d="M50 8L88 22V50C88 72 70 88 50 94C30 88 12 72 12 50V22L50 8Z" stroke="#C6A15B" strokeWidth="3" fill="none"/>
-                            <path d="M50 12L84 25V50C84 69 68 84 50 90C32 84 16 69 16 50V25L50 12Z" stroke="#C6A15B" strokeWidth="1" opacity="0.4" fill="#0A1E36"/>
-                            {/* Globe / Sun Rays */}
-                            <circle cx="50" cy="45" r="22" stroke="#C6A15B" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6"/>
-                            <path d="M50 23V67" stroke="#C6A15B" strokeWidth="1" opacity="0.3"/>
-                            <path d="M28 45H72" stroke="#C6A15B" strokeWidth="1" opacity="0.3"/>
+                            <path d="M50 8L88 22V50C88 72 70 88 50 94C30 88 12 72 12 50V22L50 8Z" stroke="#F0F9FF" strokeWidth="3" fill="none"/>
+                            <path d="M50 12L84 25V50C84 69 68 84 50 90C32 84 16 69 16 50V25L50 12Z" stroke="#F0F9FF" strokeWidth="1" opacity="0.6" fill="#0284C7"/>
+                            
+                            {/* Globe / Sun Rays (Dorado) */}
+                            <circle cx="50" cy="45" r="22" stroke="#C6A15B" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.9"/>
+                            <path d="M50 23V67" stroke="#C6A15B" strokeWidth="1" opacity="0.6"/>
+                            <path d="M28 45H72" stroke="#C6A15B" strokeWidth="1" opacity="0.6"/>
+                            
                             {/* The Road / Pathway to Nations */}
-                            <path d="M50 42L32 84H68L50 42Z" fill="url(#roadGrad)"/>
-                            <path d="M50 42L50 84" stroke="#0A1E36" strokeWidth="1.5" strokeDasharray="2 2"/>
+                            <path d="M50 42L32 84H68L50 42Z" fill="url(#roadGradLight)"/>
+                            <path d="M50 42L50 84" stroke="#082F49" strokeWidth="1.5" strokeDasharray="2 2" opacity="0.5"/>
+                            
                             {/* Olive Branch accents */}
-                            <path d="M26 62C22 56 22 48 26 42" stroke="#697255" strokeWidth="2" strokeLinecap="round"/>
-                            <path d="M74 62C78 56 78 48 74 42" stroke="#697255" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M26 62C22 56 22 48 26 42" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round"/>
+                            <path d="M74 62C78 56 78 48 74 42" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round"/>
+                            
                             {/* Gradients */}
                             <defs>
-                                <linearGradient id="roadGrad" x1="50" y1="42" x2="50" y2="84" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#F5F1E8"/>
+                                <linearGradient id="roadGradLight" x1="50" y1="42" x2="50" y2="84" gradientUnits="userSpaceOnUse">
+                                    <stop stopColor="#FFFFFF"/>
                                     <stop offset="1" stopColor="#C6A15B"/>
                                 </linearGradient>
                             </defs>
                         </svg>
                     </div>
                     <div>
-                        <div className="font-serif-custom tracking-wider font-bold text-white uppercase text-base leading-tight">
+                        <div className="font-serif-custom tracking-wider font-bold text-brand-corporate uppercase text-base leading-tight">
                             Justicia Para Las Naciones
                         </div>
                         {showSubtitle && (
-                            <div className="text-[10px] uppercase tracking-widest text-brand-gold/90 font-medium flex items-center gap-1.5">
+                            <div className="text-[10px] uppercase tracking-widest text-brand-skyDeep font-bold flex items-center gap-1.5">
                                 <span>Asociación ONGD</span>
-                                <span className="text-white/30">•</span>
-                                <span className="text-brand-ivory/70">Honduras</span>
+                                <span className="text-brand-corporate/30">•</span>
+                                <span className="text-brand-corporate/70">Honduras</span>
                             </div>
                         )}
                     </div>
@@ -219,14 +219,12 @@
             );
         };
 
-        // --- MAIN APP CONTAINER ---
         function App() {
-            const [activeTab, setActiveTab] = useState('executive'); // executive | prototype | architecture | beforeAfter
+            const [activeTab, setActiveTab] = useState('prototype'); // executive | prototype | architecture | beforeAfter
             const [selectedLang, setSelectedLang] = useState('ES');
             const [selectedCountry, setSelectedCountry] = useState('Honduras');
             const [resourceFilter, setResourceFilter] = useState('Todos');
 
-            // Interactive state for resource library demo
             const resourcesList = [
                 { id: 1, title: 'La Fe que Salva', category: 'Enseñanzas', type: 'Documento PDF', lang: 'ES', date: 'Módulo Fundamental' },
                 { id: 2, title: 'Seremos Hijos', category: 'Estudios', type: 'Audio / Video', lang: 'ES', date: 'Serie Teológica' },
@@ -261,216 +259,92 @@
             };
 
             return (
-                <div className="min-h-screen flex flex-col bg-brand-night text-brand-ivory font-sans antialiased">
-                    {/* Top Navigation Bar - Client Pitch Control */}
-                    <header className="sticky top-0 z-50 bg-brand-night/95 backdrop-blur-md border-b border-brand-gold/20 px-4 lg:px-8 py-3">
+                <div className="min-h-screen flex flex-col bg-brand-cloud text-brand-corporate font-sans antialiased">
+                    
+                    {/* Barra de Navegación de la Propuesta (Control del Cliente) */}
+                    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-brand-sky/20 px-4 lg:px-8 py-3 shadow-sm">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                             <BrandLogo size="md" />
 
-                            {/* View Selector Tabs */}
-                            <div className="flex items-center gap-1 bg-brand-deep/80 p-1.5 rounded-xl border border-white/10 overflow-x-auto max-w-full">
-                                <button 
-                                    onClick={() => setActiveTab('executive')}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
-                                        activeTab === 'executive' 
-                                        ? 'bg-brand-gold text-brand-night shadow' 
-                                        : 'text-brand-ivory/80 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <IconCompass size={15} />
-                                    <span>Estrategia & Identidad</span>
-                                </button>
-
+                            {/* Pestañas de Navegación */}
+                            <div className="flex items-center gap-1 bg-brand-cloud p-1.5 rounded-xl border border-brand-sky/20 overflow-x-auto max-w-full shadow-inner">
                                 <button 
                                     onClick={() => setActiveTab('prototype')}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
                                         activeTab === 'prototype' 
-                                        ? 'bg-brand-gold text-brand-night shadow' 
-                                        : 'text-brand-ivory/80 hover:text-white hover:bg-white/5'
+                                        ? 'bg-brand-skyDeep text-white shadow-md' 
+                                        : 'text-brand-corporate/70 hover:text-brand-skyDeep hover:bg-white'
                                     }`}
                                 >
                                     <IconGlobe size={15} />
                                     <span className="flex items-center gap-1.5">
                                         Prototipo Web (HOME)
-                                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                        <span className="w-2 h-2 rounded-full bg-brand-sky animate-pulse"></span>
                                     </span>
+                                </button>
+                                
+                                <button 
+                                    onClick={() => setActiveTab('executive')}
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
+                                        activeTab === 'executive' 
+                                        ? 'bg-brand-skyDeep text-white shadow-md' 
+                                        : 'text-brand-corporate/70 hover:text-brand-skyDeep hover:bg-white'
+                                    }`}
+                                >
+                                    <IconCompass size={15} />
+                                    <span>Estrategia Visual</span>
                                 </button>
 
                                 <button 
                                     onClick={() => setActiveTab('architecture')}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
                                         activeTab === 'architecture' 
-                                        ? 'bg-brand-gold text-brand-night shadow' 
-                                        : 'text-brand-ivory/80 hover:text-white hover:bg-white/5'
+                                        ? 'bg-brand-skyDeep text-white shadow-md' 
+                                        : 'text-brand-corporate/70 hover:text-brand-skyDeep hover:bg-white'
                                     }`}
                                 >
                                     <IconBook size={15} />
-                                    <span>Estructura & Mapa</span>
+                                    <span>Mapa de Sitio</span>
                                 </button>
 
                                 <button 
                                     onClick={() => setActiveTab('beforeAfter')}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center gap-2 whitespace-nowrap ${
                                         activeTab === 'beforeAfter' 
-                                        ? 'bg-brand-gold text-brand-night shadow' 
-                                        : 'text-brand-ivory/80 hover:text-white hover:bg-white/5'
+                                        ? 'bg-brand-skyDeep text-white shadow-md' 
+                                        : 'text-brand-corporate/70 hover:text-brand-skyDeep hover:bg-white'
                                     }`}
                                 >
                                     <IconCheck size={15} />
-                                    <span>Evolución de Marca</span>
+                                    <span>Evolución ONGD</span>
                                 </button>
-                            </div>
-
-                            {/* Institutional Badge */}
-                            <div className="hidden xl:flex items-center gap-2 text-right">
-                                <div className="text-[11px] leading-tight text-brand-ivory/70">
-                                    <span className="text-brand-gold font-bold block">DIRRSAC 2025000170</span>
-                                    <span>ONGD Asociación Honduras</span>
-                                </div>
                             </div>
                         </div>
                     </header>
 
-                    {/* MAIN CONTENT CANVAS */}
+                    {/* LIENZO PRINCIPAL */}
                     <main className="flex-1">
-                        {/* TAB 1: ESTRATEGIA & IDENTIDAD VISUAL */}
-                        {activeTab === 'executive' && (
-                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-12">
-                                {/* Header banner */}
-                                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-brand-deep via-brand-night to-black p-8 lg:p-12 border border-brand-gold/30 shadow-2xl">
-                                    <div className="absolute top-0 right-0 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl -z-0"></div>
-                                    <div className="relative z-10 max-w-3xl space-y-4">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-xs font-bold uppercase tracking-widest">
-                                            Propuesta Estratégica Institucional
-                                        </div>
-                                        <h1 className="text-3xl lg:text-5xl font-serif-custom font-bold text-white leading-tight">
-                                            Transformación Digital de <span className="gold-gradient-text">Justicia Para Las Naciones</span>
-                                        </h1>
-                                        <p className="text-brand-ivory/80 text-base lg:text-lg leading-relaxed">
-                                            Una arquitectura visual sobria, internacional y respetuosa. Evolucionamos la presencia digital de una página personal de predicador hacia la presencia sólida de una **ONGD e Institución Misionera Internacional**.
-                                        </p>
-                                        <div className="pt-4 flex flex-wrap gap-4">
-                                            <button 
-                                                onClick={() => setActiveTab('prototype')}
-                                                className="gold-gradient-bg text-brand-night font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all flex items-center gap-2 shadow-lg"
-                                            >
-                                                <span>Explorar Prototipo interactivo</span>
-                                                <IconChevronRight size={18} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Key Pillars & Strategic Decisions */}
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    <div className="bg-brand-deep/50 p-6 rounded-2xl border border-white/10 space-y-3">
-                                        <div className="w-10 h-10 rounded-xl bg-brand-gold/20 flex items-center justify-center text-brand-gold">
-                                            <IconShield size={22} />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-white font-serif-custom">1. Institución vs. Persona</h3>
-                                        <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                            **Justicia Para Las Naciones** pasa a ser la marca central. El Hermano **Fausto Zacapa** se posiciona con honor como Fundador, Capellán y Liderazgo Misionero principal, garantizando sostenibilidad institucional a 30+ años.
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-brand-deep/50 p-6 rounded-2xl border border-white/10 space-y-3">
-                                        <div className="w-10 h-10 rounded-xl bg-brand-gold/20 flex items-center justify-center text-brand-gold">
-                                            <IconFileText size={22} />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-white font-serif-custom">2. Respaldo Legal ONGD</h3>
-                                        <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                            Se integra de forma transparente el registro **DIRRSAC 2025000170** (15 de mayo de 2025, Honduras). Esto infunde confianza total a aliados internacionales, donantes y organismos de cooperación.
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-brand-deep/50 p-6 rounded-2xl border border-white/10 space-y-3">
-                                        <div className="w-10 h-10 rounded-xl bg-brand-gold/20 flex items-center justify-center text-brand-gold">
-                                            <IconHeart size={22} />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-white font-serif-custom">3. Identidad Simbólica Respetuosa</h3>
-                                        <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                            Sin utilizar cruces religiosas genéricas. La marca visual se fundamenta en: **Escudo de Protección + Sendero a las Naciones + Ramos de Olivo + Luz del Horizonte**.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Visual Identity Kit & Palette */}
-                                <div className="bg-brand-deep/30 rounded-3xl p-8 border border-white/10 space-y-6">
-                                    <h2 className="text-2xl font-serif-custom font-bold text-white flex items-center gap-3">
-                                        <span className="w-2 h-6 bg-brand-gold rounded-full"></span>
-                                        Paleta de Color & Sistema Tipográfico
-                                    </h2>
-
-                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                        <div className="space-y-2">
-                                            <div className="h-20 rounded-xl bg-[#0A1E36] border border-white/20 shadow flex items-end p-2 text-xs font-mono">#0A1E36</div>
-                                            <div className="text-xs font-bold">Azul Noche</div>
-                                            <div className="text-[11px] text-brand-ivory/60">Profundidad y seriedad institucional</div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="h-20 rounded-xl bg-[#123B61] border border-white/20 shadow flex items-end p-2 text-xs font-mono">#123B61</div>
-                                            <div className="text-xs font-bold">Azul Profundo</div>
-                                            <div className="text-[11px] text-brand-ivory/60">Estructura y confianza global</div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="h-20 rounded-xl bg-[#C6A15B] border border-white/20 shadow flex items-end p-2 text-xs font-mono text-brand-night font-bold">#C6A15B</div>
-                                            <div className="text-xs font-bold text-brand-gold">Dorado Sobrio</div>
-                                            <div className="text-[11px] text-brand-ivory/60">Honor, luz y llamado divino</div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="h-20 rounded-xl bg-[#F5F1E8] border border-white/20 shadow flex items-end p-2 text-xs font-mono text-brand-night font-bold">#F5F1E8</div>
-                                            <div className="text-xs font-bold">Marfil Cálido</div>
-                                            <div className="text-[11px] text-brand-ivory/60">Humanidad, cercanía y claridad</div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="h-20 rounded-xl bg-[#697255] border border-white/20 shadow flex items-end p-2 text-xs font-mono">#697255</div>
-                                            <div className="text-xs font-bold text-green-300">Verde Olivo</div>
-                                            <div className="text-[11px] text-brand-ivory/60">Paz, servicio y labor social</div>
-                                        </div>
-                                    </div>
-
-                                    {/* Typography showcase */}
-                                    <div className="grid md:grid-cols-2 gap-6 pt-4">
-                                        <div className="p-5 bg-brand-night rounded-2xl border border-white/10 space-y-2">
-                                            <span className="text-xs uppercase tracking-widest text-brand-gold">Tipografía Titulares</span>
-                                            <div className="font-serif-custom text-3xl font-bold text-white">Cormorant Garamond</div>
-                                            <p className="text-xs text-brand-ivory/70">Aporta un carácter noble, histórico, académico y de máxima autoridad.</p>
-                                        </div>
-                                        <div className="p-5 bg-brand-night rounded-2xl border border-white/10 space-y-2">
-                                            <span className="text-xs uppercase tracking-widest text-brand-gold">Tipografía Lectura & UI</span>
-                                            <div className="font-sans text-2xl font-bold text-white">Manrope Sans</div>
-                                            <p className="text-xs text-brand-ivory/70">Limpia, moderna, altamente legible en pantallas móviles y dispositivos digitales.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* TAB 2: PROTOTIPO WEB INTERACTIVO (HOME) */}
+                        
                         {activeTab === 'prototype' && (
-                            <div className="bg-brand-night min-h-screen border-t border-brand-gold/20">
-                                {/* Interactive Bar Banner */}
-                                <div className="bg-brand-deep px-4 py-2 text-xs flex items-center justify-between border-b border-white/10">
+                            <div className="bg-brand-cloud min-h-screen">
+                                {/* Barra de Simulación */}
+                                <div className="bg-white px-4 py-2 text-xs flex items-center justify-between border-b border-brand-sky/10 shadow-sm">
                                     <div className="flex items-center gap-2">
-                                        <span className="px-2 py-0.5 rounded bg-green-500/20 text-green-300 text-[10px] font-bold">VISTA PREVIA EN VIVO</span>
-                                        <span className="text-brand-ivory/70 hidden sm:inline">Así se experimentará la web oficial de la ONGD</span>
+                                        <span className="px-2 py-0.5 rounded bg-brand-sky/10 text-brand-skyDeep text-[10px] font-bold border border-brand-sky/20">VISTA PREVIA EN VIVO</span>
+                                        <span className="text-slate-500 hidden sm:inline">Tema: Cielo, Nubes y Esperanza</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <span className="text-brand-ivory/60 text-[11px]">Idioma de simulación:</span>
-                                        <div className="flex bg-brand-night rounded p-0.5 border border-white/10">
+                                        <span className="text-slate-400 text-[11px]">Idioma:</span>
+                                        <div className="flex bg-brand-cloud rounded p-0.5 border border-slate-200">
                                             <button 
                                                 onClick={() => setSelectedLang('ES')}
-                                                className={`px-2 py-0.5 rounded text-[11px] font-bold ${selectedLang === 'ES' ? 'bg-brand-gold text-brand-night' : 'text-brand-ivory/70'}`}
+                                                className={`px-2 py-0.5 rounded text-[11px] font-bold ${selectedLang === 'ES' ? 'bg-brand-corporate text-white' : 'text-slate-500'}`}
                                             >
                                                 ES
                                             </button>
                                             <button 
                                                 onClick={() => setSelectedLang('EN')}
-                                                className={`px-2 py-0.5 rounded text-[11px] font-bold ${selectedLang === 'EN' ? 'bg-brand-gold text-brand-night' : 'text-brand-ivory/70'}`}
+                                                className={`px-2 py-0.5 rounded text-[11px] font-bold ${selectedLang === 'EN' ? 'bg-brand-corporate text-white' : 'text-slate-500'}`}
                                             >
                                                 EN
                                             </button>
@@ -478,193 +352,195 @@
                                     </div>
                                 </div>
 
-                                {/* HERO SECTION */}
-                                <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-20 px-4">
-                                    {/* Cinematic Background Image with dark overlay */}
+                                {/* HERO SECTION (EL CIELO Y LAS NUBES) */}
+                                <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+                                    {/* Fondo de Cielo y Nubes */}
                                     <div className="absolute inset-0 z-0">
                                         <img 
-                                            src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=2000&q=80" 
-                                            alt="Misión de campo" 
-                                            className="w-full h-full object-cover opacity-25 filter contrast-125"
+                                            src="https://images.unsplash.com/photo-1509803874385-db7c23652552?auto=format&fit=crop&w=2000&q=80" 
+                                            alt="Cielo con nubes" 
+                                            className="w-full h-full object-cover opacity-90"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-brand-night via-brand-night/80 to-transparent"></div>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-brand-night via-transparent to-brand-night"></div>
+                                        {/* Gradientes para fusionar la imagen con el contenido, garantizando lectura */}
+                                        <div className="absolute inset-0 bg-gradient-to-b from-brand-skyDeep/30 via-transparent to-brand-cloud"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-brand-cloud via-brand-cloud/40 to-transparent h-1/2 bottom-0"></div>
                                     </div>
 
-                                    <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+                                    <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8 px-4 mt-20">
                                         {/* Tagline Badge */}
-                                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-deep/90 border border-brand-gold/40 shadow-xl backdrop-blur-md">
-                                            <span className="w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
-                                            <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">
+                                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-white shadow-lg backdrop-blur-md">
+                                            <span className="w-2 h-2 rounded-full bg-brand-skyDeep animate-pulse"></span>
+                                            <span className="text-[11px] uppercase tracking-widest text-brand-corporate font-bold">
                                                 {selectedLang === 'ES' ? 'ASOCIACIÓN ONGD REGISTRADA • HONDURAS' : 'REGISTERED ONGD ASSOCIATION • HONDURAS'}
                                             </span>
                                         </div>
 
                                         {/* Main Hero Title */}
                                         <div className="space-y-4">
-                                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif-custom font-bold text-white tracking-tight leading-none">
-                                                JUSTICIA PARA LAS NACIONES
+                                            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif-custom font-bold text-brand-corporate tracking-tight leading-none drop-shadow-sm">
+                                                JUSTICIA PARA <br/> LAS NACIONES
                                             </h1>
-                                            <p className="text-xl sm:text-2xl font-serif-custom italic text-brand-gold/90 max-w-3xl mx-auto">
+                                            <p className="text-xl sm:text-2xl font-serif-custom italic text-brand-skyDeep max-w-3xl mx-auto drop-shadow-sm font-semibold">
                                                 "{selectedLang === 'ES' ? 'Servir · Acompañar · Restaurar · Llevar Esperanza' : 'Serve · Accompanize · Restore · Bring Hope'}"
                                             </p>
                                         </div>
 
-                                        <p className="text-sm sm:text-base text-brand-ivory/80 max-w-2xl mx-auto font-light leading-relaxed">
+                                        <p className="text-sm sm:text-lg text-slate-700 max-w-2xl mx-auto font-medium leading-relaxed">
                                             {selectedLang === 'ES' 
                                                 ? 'Una misión al servicio de las personas, las comunidades vulnerables y las naciones, fundamentada en la fe, la transparencia y el amor al prójimo.'
                                                 : 'A mission serving vulnerable individuals, communities and nations, founded on faith, transparency, and love for our neighbors.'}
                                         </p>
 
                                         {/* CTA Buttons */}
-                                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                                            <a href="#mision" className="w-full sm:w-auto px-8 py-4 rounded-xl gold-gradient-bg text-brand-night font-bold text-sm tracking-wide shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+                                            <a href="#mision" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-skyDeep text-white font-bold text-sm tracking-wide shadow-xl shadow-brand-skyDeep/30 hover:scale-105 hover:bg-brand-corporate transition-all flex items-center justify-center gap-2">
                                                 <span>{selectedLang === 'ES' ? 'Conoce nuestra misión' : 'Discover our mission'}</span>
                                                 <IconChevronRight size={18} />
                                             </a>
-                                            <a href="#apoya" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-deep/80 hover:bg-brand-deep text-white font-semibold text-sm border border-brand-gold/30 backdrop-blur-md transition-all flex items-center justify-center gap-2">
-                                                <IconHeart size={18} className="text-brand-gold" />
+                                            <a href="#apoya" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white hover:bg-brand-cloud text-brand-corporate font-bold text-sm border border-brand-sky/20 shadow-lg transition-all flex items-center justify-center gap-2">
+                                                <IconHeart size={18} className="text-brand-skyDeep" />
                                                 <span>{selectedLang === 'ES' ? 'Únete a la Misión' : 'Join the Mission'}</span>
                                             </a>
                                         </div>
 
-                                        <div className="pt-8 flex items-center justify-center gap-6 text-xs text-brand-ivory/50">
+                                        <div className="pt-12 flex items-center justify-center gap-6 text-xs text-brand-corporate/60 font-bold uppercase tracking-wider">
                                             <span className="flex items-center gap-1.5"><IconMapPin size={14} className="text-brand-gold"/> Honduras</span>
                                             <span>•</span>
-                                            <span className="flex items-center gap-1.5"><IconGlobe size={14} className="text-brand-gold"/> Las Naciones</span>
+                                            <span className="flex items-center gap-1.5"><IconGlobe size={14} className="text-brand-skyDeep"/> Las Naciones</span>
                                         </div>
                                     </div>
                                 </section>
 
                                 {/* SECTION 2: NUESTRA RAZÓN DE SER */}
-                                <section id="mision" className="py-20 px-4 bg-gradient-to-b from-brand-night to-brand-deep/40 border-t border-brand-gold/10">
-                                    <div className="max-w-4xl mx-auto text-center space-y-6">
-                                        <div className="w-12 h-12 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 mx-auto flex items-center justify-center text-brand-gold">
-                                            <IconSun size={26} />
+                                <section id="mision" className="py-24 px-4 bg-white relative">
+                                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-sky/30 to-transparent"></div>
+                                    
+                                    <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
+                                        <div className="w-16 h-16 rounded-full bg-brand-cloud border border-brand-sky/20 mx-auto flex items-center justify-center text-brand-gold shadow-inner">
+                                            <IconSun size={32} />
                                         </div>
 
-                                        <h2 className="text-3xl sm:text-5xl font-serif-custom font-bold text-white">
+                                        <h2 className="text-4xl sm:text-5xl font-serif-custom font-bold text-brand-corporate">
                                             {selectedLang === 'ES' ? 'La misión comienza con las personas.' : 'The mission begins with people.'}
                                         </h2>
 
-                                        <p className="text-base sm:text-lg text-brand-ivory/80 leading-relaxed font-light">
+                                        <p className="text-lg sm:text-xl text-slate-600 leading-relaxed font-light">
                                             {selectedLang === 'ES' 
                                                 ? 'Justicia Para Las Naciones existe para llevar un mensaje trasformador de apoyo espiritual, alivio social y acompañamiento a familias y comunidades vulnerables dentro y fuera de Honduras.'
                                                 : 'Justice For The Nations exists to deliver a transforming message of spiritual support, social relief, and guidance to vulnerable families and communities within and beyond Honduras.'}
                                         </p>
 
-                                        <div className="pt-6">
-                                            <blockquote className="p-6 rounded-2xl bg-brand-night/80 border-l-4 border-brand-gold text-brand-gold font-serif-custom text-xl italic max-w-2xl mx-auto shadow-lg">
-                                                "{selectedLang === 'ES' 
-                                                    ? 'El llamado de un discípulo a la más grande comisión de todas: AMAR.' 
-                                                    : 'The disciple’s call to the greatest commission of all: TO LOVE.'}"
+                                        <div className="pt-8">
+                                            <blockquote className="p-8 rounded-3xl bg-brand-cloud/50 border border-brand-sky/20 text-brand-skyDeep font-serif-custom text-2xl italic max-w-3xl mx-auto shadow-sm relative overflow-hidden">
+                                                <div className="absolute -top-4 -left-4 text-7xl text-brand-sky/20 font-serif-custom">"</div>
+                                                <span className="relative z-10 text-brand-corporate font-bold">
+                                                    {selectedLang === 'ES' 
+                                                        ? 'El llamado de un discípulo a la más grande comisión de todas: AMAR.' 
+                                                        : 'The disciple’s call to the greatest commission of all: TO LOVE.'}
+                                                </span>
                                             </blockquote>
                                         </div>
                                     </div>
                                 </section>
 
                                 {/* SECTION 3: LOS 4 PILARES DEL MINISTERIO */}
-                                <section className="py-20 px-4 lg:px-8 max-w-7xl mx-auto space-y-12">
-                                    <div className="text-center space-y-3">
-                                        <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Líneas de Acción Institucional</span>
-                                        <h2 className="text-3xl sm:text-4xl font-serif-custom font-bold text-white">Nuestros Pilares de Servicio</h2>
+                                <section className="py-24 px-4 lg:px-8 max-w-7xl mx-auto space-y-16">
+                                    <div className="text-center space-y-4">
+                                        <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold bg-brand-cloud px-4 py-1.5 rounded-full border border-brand-sky/20">Líneas de Acción Institucional</span>
+                                        <h2 className="text-3xl sm:text-5xl font-serif-custom font-bold text-brand-corporate">Nuestros Pilares de Servicio</h2>
                                     </div>
 
-                                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                                         {/* Pilar 1 */}
-                                        <div className="bg-gradient-to-b from-brand-deep/60 to-brand-night p-8 rounded-3xl border border-white/10 space-y-4 hover:border-brand-gold/50 transition-all group">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
-                                                <IconGlobe size={28} />
+                                        <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-brand-sky/5 border border-slate-100 hover:border-brand-sky/40 hover:-translate-y-2 transition-all duration-300 group">
+                                            <div className="w-16 h-16 rounded-2xl bg-brand-cloud flex items-center justify-center text-brand-skyDeep group-hover:scale-110 transition-transform shadow-inner mb-6">
+                                                <IconGlobe size={30} />
                                             </div>
-                                            <h3 className="text-xl font-serif-custom font-bold text-white">Misiones</h3>
-                                            <p className="text-xs text-brand-ivory/70 leading-relaxed">
+                                            <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate mb-3">Misiones</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed">
                                                 Ir directamente a los lugares donde existe necesidad física y espiritual, llevando esperanza a comunidades apartadas.
                                             </p>
                                         </div>
 
                                         {/* Pilar 2 */}
-                                        <div className="bg-gradient-to-b from-brand-deep/60 to-brand-night p-8 rounded-3xl border border-white/10 space-y-4 hover:border-brand-gold/50 transition-all group">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
-                                                <IconShield size={28} />
+                                        <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-brand-sky/5 border border-slate-100 hover:border-brand-sky/40 hover:-translate-y-2 transition-all duration-300 group">
+                                            <div className="w-16 h-16 rounded-2xl bg-brand-cloud flex items-center justify-center text-brand-skyDeep group-hover:scale-110 transition-transform shadow-inner mb-6">
+                                                <IconShield size={30} />
                                             </div>
-                                            <h3 className="text-xl font-serif-custom font-bold text-white">Capellanía & Acompañamiento</h3>
-                                            <p className="text-xs text-brand-ivory/70 leading-relaxed">
+                                            <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate mb-3">Capellanía & Apoyo</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed">
                                                 Estar presentes para escuchar, aconsejar y brindar soporte institucional e individual en momentos críticos.
                                             </p>
                                         </div>
 
                                         {/* Pilar 3 */}
-                                        <div className="bg-gradient-to-b from-brand-deep/60 to-brand-night p-8 rounded-3xl border border-white/10 space-y-4 hover:border-brand-gold/50 transition-all group">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
-                                                <IconHeart size={28} />
+                                        <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-brand-sky/5 border border-slate-100 hover:border-brand-sky/40 hover:-translate-y-2 transition-all duration-300 group">
+                                            <div className="w-16 h-16 rounded-2xl bg-brand-cloud flex items-center justify-center text-brand-skyDeep group-hover:scale-110 transition-transform shadow-inner mb-6">
+                                                <IconHeart size={30} />
                                             </div>
-                                            <h3 className="text-xl font-serif-custom font-bold text-white">Oración e Intercesión</h3>
-                                            <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                                Red de intercesión activa por las familias, las naciones y los necesitados a través de la iniciativa "Pregoneros de Justicia".
+                                            <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate mb-3">Oración</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed">
+                                                Red de intercesión activa por las familias y las naciones a través de la iniciativa "Pregoneros de Justicia".
                                             </p>
                                         </div>
 
                                         {/* Pilar 4 */}
-                                        <div className="bg-gradient-to-b from-brand-deep/60 to-brand-night p-8 rounded-3xl border border-white/10 space-y-4 hover:border-brand-gold/50 transition-all group">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
-                                                <IconBook size={28} />
+                                        <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-brand-sky/5 border border-slate-100 hover:border-brand-sky/40 hover:-translate-y-2 transition-all duration-300 group">
+                                            <div className="w-16 h-16 rounded-2xl bg-brand-cloud flex items-center justify-center text-brand-skyDeep group-hover:scale-110 transition-transform shadow-inner mb-6">
+                                                <IconBook size={30} />
                                             </div>
-                                            <h3 className="text-xl font-serif-custom font-bold text-white">Enseñanza & Formación</h3>
-                                            <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                                Compartir conocimiento bíblico riguroso, valores y principios para el crecimiento y edificación de la comunidad.
+                                            <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate mb-3">Formación</h3>
+                                            <p className="text-sm text-slate-600 leading-relaxed">
+                                                Compartir conocimiento bíblico, valores y principios para el crecimiento y edificación de la comunidad.
                                             </p>
                                         </div>
                                     </div>
                                 </section>
 
-                                {/* SECTION 4: LA MISIÓN EN ACCIÓN (PROYECTO DESTACADO) */}
-                                <section className="py-20 px-4 bg-brand-deep/30 border-y border-white/10">
-                                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-                                        <div className="relative rounded-3xl overflow-hidden border border-brand-gold/30 shadow-2xl group">
+                                {/* SECTION 4: LA MISIÓN EN ACCIÓN */}
+                                <section className="py-24 px-4 bg-brand-cloud cloud-pattern border-y border-brand-sky/10">
+                                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+                                        <div className="relative rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl shadow-brand-sky/20 group">
                                             <img 
                                                 src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1200&q=80" 
                                                 alt="Misión en las Montañas" 
-                                                className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+                                                className="w-full h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-brand-night via-transparent to-transparent"></div>
-                                            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-brand-corporate/90 via-brand-corporate/20 to-transparent"></div>
+                                            <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
                                                 <div>
-                                                    <span className="px-3 py-1 rounded-full bg-brand-gold text-brand-night text-[10px] font-bold uppercase">Proyecto Documentado</span>
-                                                    <h4 className="text-xl font-serif-custom font-bold text-white mt-1">Misión en las Montañas de Honduras</h4>
+                                                    <span className="px-3 py-1 rounded-full bg-brand-gold text-white text-[10px] font-bold uppercase shadow-lg">Proyecto Documentado</span>
+                                                    <h4 className="text-2xl font-serif-custom font-bold text-white mt-3 drop-shadow-md">Misión en las Montañas de Honduras</h4>
                                                 </div>
-                                                <span className="text-xs text-brand-ivory/80 bg-brand-night/80 px-3 py-1 rounded-lg border border-white/10">20+ Fotos & Galería</span>
+                                                <span className="text-xs font-bold text-brand-corporate bg-white px-3 py-1.5 rounded-xl shadow-lg">20+ Fotos</span>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-6">
-                                            <div className="inline-flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-widest">
+                                        <div className="space-y-8">
+                                            <div className="inline-flex items-center gap-2 text-brand-skyDeep text-xs font-bold uppercase tracking-widest bg-white px-4 py-1.5 rounded-full shadow-sm">
                                                 <IconCompass size={16} />
                                                 <span>La Misión en Acción</span>
                                             </div>
-                                            <h2 className="text-3xl sm:text-4xl font-serif-custom font-bold text-white">
-                                                Historias Reales, Impacto Tangible
+                                            <h2 className="text-4xl sm:text-5xl font-serif-custom font-bold text-brand-corporate leading-tight">
+                                                Historias Reales,<br/>Impacto Tangible
                                             </h2>
-                                            <p className="text-sm sm:text-base text-brand-ivory/80 leading-relaxed">
+                                            <p className="text-base text-slate-600 leading-relaxed">
                                                 No publicamos videos dispersos. Transformamos cada viaje misionero en un reporte visual transparente con fotografías documentales, historias de comunidades beneficiadas y testimonios de transformación.
                                             </p>
-                                            <ul className="space-y-3 text-xs text-brand-ivory/90">
-                                                <li className="flex items-center gap-3">
-                                                    <span className="w-5 h-5 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center"><IconCheck size={12}/></span>
+                                            <ul className="space-y-4 text-sm text-brand-corporate font-medium">
+                                                <li className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                                    <span className="w-8 h-8 rounded-full bg-brand-cloud text-brand-skyDeep flex items-center justify-center shrink-0"><IconCheck size={16}/></span>
                                                     <span>Entrega directa de suministros y apoyo alimentario en comunidades rurales.</span>
                                                 </li>
-                                                <li className="flex items-center gap-3">
-                                                    <span className="w-5 h-5 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center"><IconCheck size={12}/></span>
+                                                <li className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                                    <span className="w-8 h-8 rounded-full bg-brand-cloud text-brand-skyDeep flex items-center justify-center shrink-0"><IconCheck size={16}/></span>
                                                     <span>Jornadas de oración, consuelo y acompañamiento personal pastoril.</span>
                                                 </li>
-                                                <li className="flex items-center gap-3">
-                                                    <span className="w-5 h-5 rounded-full bg-brand-gold/20 text-brand-gold flex items-center justify-center"><IconCheck size={12}/></span>
-                                                    <span>Rendición de cuentas e informes de impacto para donantes e instituciones.</span>
-                                                </li>
                                             </ul>
-                                            <div>
-                                                <button className="px-6 py-3 rounded-xl bg-brand-deep hover:bg-brand-gold hover:text-brand-night transition-colors font-bold text-xs uppercase tracking-wider border border-brand-gold/40 flex items-center gap-2">
+                                            <div className="pt-4">
+                                                <button className="px-8 py-4 rounded-xl bg-brand-corporate text-white hover:bg-brand-skyDeep transition-colors font-bold text-sm shadow-xl shadow-brand-corporate/20 flex items-center gap-2">
                                                     <span>Ver archivo de misiones</span>
-                                                    <IconChevronRight size={16} />
+                                                    <IconChevronRight size={18} />
                                                 </button>
                                             </div>
                                         </div>
@@ -672,18 +548,17 @@
                                 </section>
 
                                 {/* SECTION 5: MAPA MUNDIAL DE MISIONES (INTERACTIVO) */}
-                                <section className="py-20 px-4 max-w-7xl mx-auto space-y-10">
-                                    <div className="text-center space-y-3">
-                                        <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Alcance Geográfico</span>
-                                        <h2 className="text-3xl sm:text-4xl font-serif-custom font-bold text-white">Nuestra Misión No Conoce Fronteras</h2>
-                                        <p className="text-xs text-brand-ivory/70 max-w-xl mx-auto">
+                                <section className="py-24 px-4 max-w-7xl mx-auto space-y-12">
+                                    <div className="text-center space-y-4 max-w-3xl mx-auto">
+                                        <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Alcance Geográfico</span>
+                                        <h2 className="text-4xl font-serif-custom font-bold text-brand-corporate">Nuestra Misión No Conoce Fronteras</h2>
+                                        <p className="text-sm text-slate-600">
                                             Selecciona uno de los países con labor misionera documentada para explorar las acciones realizadas:
                                         </p>
                                     </div>
 
-                                    {/* Interactive Country Selector */}
-                                    <div className="grid lg:grid-cols-3 gap-6">
-                                        <div className="space-y-3 lg:col-span-1">
+                                    <div className="grid lg:grid-cols-3 gap-8">
+                                        <div className="space-y-4 lg:col-span-1">
                                             {Object.keys(countriesData).map((countryKey) => {
                                                 const country = countriesData[countryKey];
                                                 const isSelected = selectedCountry === countryKey;
@@ -691,43 +566,42 @@
                                                     <div 
                                                         key={countryKey}
                                                         onClick={() => setSelectedCountry(countryKey)}
-                                                        className={`p-5 rounded-2xl cursor-pointer transition-all border flex items-center justify-between ${
+                                                        className={`p-6 rounded-[1.5rem] cursor-pointer transition-all border-2 flex items-center justify-between ${
                                                             isSelected 
-                                                            ? 'bg-brand-gold/20 border-brand-gold text-white shadow-lg' 
-                                                            : 'bg-brand-deep/40 border-white/10 text-brand-ivory/70 hover:bg-brand-deep/80'
+                                                            ? 'bg-white border-brand-sky shadow-xl shadow-brand-sky/10 scale-105' 
+                                                            : 'bg-white border-transparent shadow-sm hover:border-brand-sky/30 text-slate-500'
                                                         }`}
                                                     >
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-2xl">{country.flag}</span>
+                                                        <div className="flex items-center gap-4">
+                                                            <span className="text-3xl filter drop-shadow-sm">{country.flag}</span>
                                                             <div>
-                                                                <h4 className="font-bold text-sm text-white">{countryKey}</h4>
-                                                                <p className="text-[11px] text-brand-gold">{country.stats}</p>
+                                                                <h4 className={`font-bold text-base ${isSelected ? 'text-brand-corporate' : 'text-slate-700'}`}>{countryKey}</h4>
+                                                                <p className="text-[11px] text-brand-skyDeep font-semibold mt-0.5">{country.stats}</p>
                                                             </div>
                                                         </div>
-                                                        <IconChevronRight size={18} className={isSelected ? "text-brand-gold" : "text-white/30"} />
+                                                        <IconChevronRight size={20} className={isSelected ? "text-brand-sky" : "text-slate-300"} />
                                                     </div>
                                                 );
                                             })}
                                         </div>
 
-                                        {/* Country Detail Display */}
-                                        <div className="lg:col-span-2 bg-brand-deep/50 rounded-3xl p-6 border border-brand-gold/30 flex flex-col md:flex-row gap-6 items-center">
+                                        <div className="lg:col-span-2 bg-white rounded-[2rem] p-2 shadow-xl shadow-brand-sky/10 border border-slate-100 flex flex-col md:flex-row gap-8 items-stretch overflow-hidden">
                                             <img 
                                                 src={countriesData[selectedCountry].image} 
                                                 alt={selectedCountry}
-                                                className="w-full md:w-1/2 h-64 object-cover rounded-2xl border border-white/10"
+                                                className="w-full md:w-1/2 h-72 md:h-auto object-cover rounded-[1.5rem]"
                                             />
-                                            <div className="space-y-4 md:w-1/2">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-3xl">{countriesData[selectedCountry].flag}</span>
-                                                    <h3 className="text-2xl font-serif-custom font-bold text-white">{selectedCountry}</h3>
+                                            <div className="space-y-5 md:w-1/2 py-8 pr-8 pl-4 md:pl-0 flex flex-col justify-center">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-4xl drop-shadow-md">{countriesData[selectedCountry].flag}</span>
+                                                    <h3 className="text-3xl font-serif-custom font-bold text-brand-corporate">{selectedCountry}</h3>
                                                 </div>
                                                 <h4 className="text-xs font-bold text-brand-gold uppercase tracking-wider">{countriesData[selectedCountry].title}</h4>
-                                                <p className="text-xs text-brand-ivory/80 leading-relaxed">
+                                                <p className="text-sm text-slate-600 leading-relaxed">
                                                     {countriesData[selectedCountry].description}
                                                 </p>
-                                                <div className="pt-2">
-                                                    <button className="px-4 py-2 rounded-lg bg-brand-gold text-brand-night font-bold text-xs">
+                                                <div className="pt-4">
+                                                    <button className="px-6 py-3 rounded-xl bg-brand-cloud text-brand-corporate border border-brand-sky/20 font-bold text-sm hover:bg-brand-skyDeep hover:text-white transition-all shadow-sm">
                                                         Ver informe de {selectedCountry}
                                                     </button>
                                                 </div>
@@ -737,51 +611,50 @@
                                 </section>
 
                                 {/* SECTION 6: FAUSTO ZACAPA & LIDERAZGO INSTITUCIONAL */}
-                                <section className="py-20 px-4 bg-gradient-to-r from-brand-night via-brand-deep/60 to-brand-night border-t border-brand-gold/20">
-                                    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center">
-                                        {/* Portrait Frame */}
+                                <section className="py-24 px-4 bg-white border-y border-brand-sky/10">
+                                    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 items-center">
                                         <div className="md:col-span-5 relative">
-                                            <div className="aspect-square rounded-3xl overflow-hidden border-2 border-brand-gold/40 shadow-2xl relative">
+                                            <div className="aspect-square rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl shadow-brand-sky/20 relative">
                                                 <img 
                                                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" 
                                                     alt="Fausto Zacapa" 
                                                     className="w-full h-full object-cover filter contrast-110"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-brand-night via-transparent to-transparent"></div>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-brand-corporate/60 via-transparent to-transparent"></div>
                                             </div>
-                                            <div className="absolute -bottom-4 -right-4 bg-brand-gold text-brand-night p-4 rounded-2xl shadow-xl font-serif-custom text-center">
-                                                <div className="text-2xl font-bold">20+</div>
-                                                <div className="text-[10px] font-sans font-bold uppercase tracking-wider">Años de Servicio</div>
+                                            <div className="absolute -bottom-6 -right-6 bg-white text-brand-corporate p-5 rounded-2xl shadow-xl border border-slate-100 font-serif-custom text-center">
+                                                <div className="text-3xl font-bold text-brand-skyDeep">20+</div>
+                                                <div className="text-[10px] font-sans font-bold uppercase tracking-wider text-slate-500 mt-1">Años de Servicio</div>
                                             </div>
                                         </div>
 
-                                        {/* Bio Text */}
-                                        <div className="md:col-span-7 space-y-5">
-                                            <div className="space-y-1">
-                                                <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Liderazgo & Historia</span>
-                                                <h2 className="text-3xl sm:text-4xl font-serif-custom font-bold text-white">Fausto Zacapa</h2>
-                                                <p className="text-xs text-brand-gold font-medium">Fundador · Capellán · Misionero Principal</p>
+                                        <div className="md:col-span-7 space-y-6 md:pl-8">
+                                            <div className="space-y-2">
+                                                <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Liderazgo & Historia</span>
+                                                <h2 className="text-4xl sm:text-5xl font-serif-custom font-bold text-brand-corporate">Fausto Zacapa</h2>
+                                                <p className="text-sm text-brand-gold font-bold uppercase tracking-wider">Fundador · Capellán · Misionero Principal</p>
                                             </div>
 
-                                            <p className="text-xs sm:text-sm text-brand-ivory/80 leading-relaxed">
-                                                Con una trayectoria dedicada al servicio de las personas y la proclamación del Evangelio, Hermano Fausto ha impulsado proyectos misioneros y de capellanía en diversos entornos.
+                                            <p className="text-base text-slate-600 leading-relaxed">
+                                                Con una trayectoria dedicada al servicio de las personas y la proclamación del Evangelio, Hermano Fausto ha impulsado proyectos misioneros y de capellanía en diversos entornos, sentando las bases de lo que hoy es nuestra ONGD.
                                             </p>
 
-                                            {/* Legacy Brands Integration */}
-                                            <div className="p-4 rounded-2xl bg-brand-night/80 border border-white/10 space-y-2">
-                                                <span className="text-[11px] text-brand-gold uppercase tracking-wider font-bold block">Reconocimiento Histórico Digital:</span>
-                                                <p className="text-xs text-brand-ivory/70">
-                                                    Conocido también en plataformas y canales digitales oficiales bajo las iniciativas:
+                                            <div className="p-6 rounded-2xl bg-brand-cloud border border-brand-sky/20 space-y-3">
+                                                <span className="text-[11px] text-brand-corporate uppercase tracking-wider font-bold flex items-center gap-2">
+                                                    <IconGlobe size={14} className="text-brand-skyDeep"/> Reconocimiento Histórico Digital
+                                                </span>
+                                                <p className="text-xs text-slate-600">
+                                                    Conocido también en plataformas y canales digitales bajo las iniciativas que originaron esta misión:
                                                 </p>
-                                                <div className="flex flex-wrap gap-2 pt-1">
-                                                    <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[11px] text-brand-ivory">Hermano Fausto / Brother Fausto</span>
-                                                    <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[11px] text-brand-ivory">Un Misionero Para Cristo</span>
-                                                    <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[11px] text-brand-ivory">Pregoneros de Justicia</span>
+                                                <div className="flex flex-wrap gap-2 pt-2">
+                                                    <span className="px-3 py-1.5 rounded-lg bg-white shadow-sm text-[11px] text-brand-corporate font-semibold border border-slate-100">Hermano Fausto / Brother Fausto</span>
+                                                    <span className="px-3 py-1.5 rounded-lg bg-white shadow-sm text-[11px] text-brand-corporate font-semibold border border-slate-100">Un Misionero Para Cristo</span>
+                                                    <span className="px-3 py-1.5 rounded-lg bg-white shadow-sm text-[11px] text-brand-corporate font-semibold border border-slate-100">Pregoneros de Justicia</span>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <button className="px-5 py-2.5 rounded-xl border border-brand-gold/40 text-brand-gold hover:bg-brand-gold hover:text-brand-night transition-colors text-xs font-bold">
+                                            <div className="pt-4">
+                                                <button className="px-6 py-3 rounded-xl border-2 border-brand-corporate text-brand-corporate hover:bg-brand-corporate hover:text-white transition-colors text-sm font-bold shadow-md">
                                                     Leer biografía completa
                                                 </button>
                                             </div>
@@ -789,24 +662,23 @@
                                     </div>
                                 </section>
 
-                                {/* SECTION 7: CENTRO DE RECURSOS & BIBLIOTECA DE ENSEÑANZAS */}
-                                <section className="py-20 px-4 max-w-7xl mx-auto space-y-10">
-                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-brand-gold/20 pb-6">
-                                        <div>
-                                            <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Biblioteca de Contenidos</span>
-                                            <h2 className="text-3xl font-serif-custom font-bold text-white">Recursos para Crecer</h2>
+                                {/* SECTION 7: CENTRO DE RECURSOS (BIBLIOTECA) */}
+                                <section className="py-24 px-4 max-w-7xl mx-auto space-y-12">
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 pb-8">
+                                        <div className="space-y-2">
+                                            <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Biblioteca de Contenidos</span>
+                                            <h2 className="text-4xl font-serif-custom font-bold text-brand-corporate">Recursos para Crecer</h2>
                                         </div>
 
-                                        {/* Filter Badges */}
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-2 bg-white p-1.5 rounded-xl shadow-sm border border-slate-100">
                                             {['Todos', 'Enseñanzas', 'Estudios', 'Misiones', 'Formación'].map((f) => (
                                                 <button 
                                                     key={f}
                                                     onClick={() => setResourceFilter(f)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                                                         resourceFilter === f 
-                                                        ? 'bg-brand-gold text-brand-night' 
-                                                        : 'bg-brand-deep/60 text-brand-ivory/70 hover:bg-brand-deep'
+                                                        ? 'bg-brand-corporate text-white shadow' 
+                                                        : 'text-slate-500 hover:text-brand-skyDeep hover:bg-brand-cloud'
                                                     }`}
                                                 >
                                                     {f}
@@ -815,27 +687,28 @@
                                         </div>
                                     </div>
 
-                                    {/* Resources Cards Grid */}
-                                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                         {resourcesList
                                             .filter(r => resourceFilter === 'Todos' || r.category === resourceFilter)
                                             .map((item) => (
-                                                <div key={item.id} className="bg-brand-deep/40 p-6 rounded-2xl border border-white/10 hover:border-brand-gold/40 transition-all space-y-3 flex flex-col justify-between">
-                                                    <div className="space-y-2">
-                                                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-brand-gold">
-                                                            <span>{item.category}</span>
-                                                            <span className="px-2 py-0.5 rounded bg-white/10 text-white/80">{item.lang}</span>
+                                                <div key={item.id} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-lg shadow-brand-sky/5 hover:shadow-xl hover:border-brand-sky/30 transition-all space-y-4 flex flex-col justify-between group">
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-brand-skyDeep">
+                                                            <span className="bg-brand-cloud px-3 py-1 rounded-full">{item.category}</span>
+                                                            <span className="px-2 py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">{item.lang}</span>
                                                         </div>
-                                                        <h3 className="text-lg font-serif-custom font-bold text-white">{item.title}</h3>
-                                                        <p className="text-xs text-brand-ivory/60">{item.type} • {item.date}</p>
+                                                        <h3 className="text-xl font-serif-custom font-bold text-brand-corporate group-hover:text-brand-skyDeep transition-colors">{item.title}</h3>
+                                                        <p className="text-xs text-slate-500 font-medium">{item.type} • {item.date}</p>
                                                     </div>
 
-                                                    <div className="pt-2 flex items-center justify-between border-t border-white/5">
-                                                        <span className="text-xs text-brand-gold font-semibold flex items-center gap-1 cursor-pointer hover:underline">
+                                                    <div className="pt-4 flex items-center justify-between border-t border-slate-100 mt-4">
+                                                        <span className="text-xs text-brand-corporate font-bold flex items-center gap-1 cursor-pointer group-hover:text-brand-skyDeep">
                                                             <span>Acceder al material</span>
                                                             <IconChevronRight size={14} />
                                                         </span>
-                                                        <IconFileText size={16} className="text-brand-ivory/40" />
+                                                        <div className="w-8 h-8 rounded-full bg-brand-cloud flex items-center justify-center">
+                                                            <IconFileText size={14} className="text-brand-skyDeep" />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}
@@ -843,36 +716,37 @@
                                 </section>
 
                                 {/* SECTION 8: ORACIÓN Y ACOMPAÑAMIENTO */}
-                                <section className="py-20 px-4 bg-brand-deep/40 border-t border-brand-gold/10">
-                                    <div className="max-w-4xl mx-auto bg-brand-night/90 p-8 sm:p-12 rounded-3xl border border-brand-gold/30 shadow-2xl space-y-8">
-                                        <div className="text-center space-y-3">
-                                            <div className="w-12 h-12 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 mx-auto flex items-center justify-center text-brand-gold">
-                                                <IconHeart size={24} />
+                                <section className="py-24 px-4 bg-brand-skyDeep relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1509803874385-db7c23652552?auto=format&fit=crop&w=2000&q=80')] opacity-10 object-cover mix-blend-overlay"></div>
+                                    <div className="max-w-3xl mx-auto bg-white p-10 sm:p-14 rounded-[3rem] shadow-2xl relative z-10 space-y-10">
+                                        <div className="text-center space-y-4">
+                                            <div className="w-16 h-16 rounded-2xl bg-brand-cloud mx-auto flex items-center justify-center text-brand-skyDeep shadow-inner mb-2">
+                                                <IconHeart size={32} />
                                             </div>
-                                            <h2 className="text-3xl font-serif-custom font-bold text-white">No tienes que caminar solo.</h2>
-                                            <p className="text-xs sm:text-sm text-brand-ivory/80 max-w-xl mx-auto">
+                                            <h2 className="text-4xl font-serif-custom font-bold text-brand-corporate">No tienes que caminar solo.</h2>
+                                            <p className="text-base text-slate-600 max-w-xl mx-auto">
                                                 Queremos orar por ti y brindarte un espacio de acompañamiento espiritual respetuoso y confidencial.
                                             </p>
                                         </div>
 
-                                        <form onSubmit={(e) => e.preventDefault()} className="space-y-4 max-w-xl mx-auto">
-                                            <div className="grid sm:grid-cols-2 gap-4">
+                                        <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+                                            <div className="grid sm:grid-cols-2 gap-6">
                                                 <div>
-                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-brand-ivory/70 block mb-1">Nombre Completo</label>
-                                                    <input type="text" placeholder="Tu nombre" className="w-full bg-brand-deep/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-gold" />
+                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Nombre Completo</label>
+                                                    <input type="text" placeholder="Tu nombre" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-brand-corporate focus:outline-none focus:ring-2 focus:ring-brand-sky focus:border-transparent transition-all" />
                                                 </div>
                                                 <div>
-                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-brand-ivory/70 block mb-1">País / Ciudad</label>
-                                                    <input type="text" placeholder="Ej. Honduras, México..." className="w-full bg-brand-deep/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-gold" />
+                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">País / Ciudad</label>
+                                                    <input type="text" placeholder="Ej. Honduras, México..." className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-brand-corporate focus:outline-none focus:ring-2 focus:ring-brand-sky focus:border-transparent transition-all" />
                                                 </div>
                                             </div>
 
                                             <div>
-                                                <label className="text-[11px] font-bold uppercase tracking-wider text-brand-ivory/70 block mb-1">Petición de Oración o Mensaje</label>
-                                                <textarea rows="3" placeholder="Escribe aquí tu petición confidencial..." className="w-full bg-brand-deep/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-gold"></textarea>
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Petición de Oración o Mensaje</label>
+                                                <textarea rows="4" placeholder="Escribe aquí tu petición confidencial..." className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-brand-corporate focus:outline-none focus:ring-2 focus:ring-brand-sky focus:border-transparent transition-all"></textarea>
                                             </div>
 
-                                            <button className="w-full py-3.5 rounded-xl gold-gradient-bg text-brand-night font-bold text-xs uppercase tracking-wider shadow-lg hover:opacity-90">
+                                            <button className="w-full py-4 rounded-xl bg-brand-corporate hover:bg-brand-skyDeep text-white font-bold text-sm uppercase tracking-wider shadow-xl shadow-brand-corporate/20 transition-colors">
                                                 Enviar Petición de Oración
                                             </button>
                                         </form>
@@ -880,35 +754,37 @@
                                 </section>
 
                                 {/* SECTION 9: TRANSPARENCIA Y RENDICIÓN DE CUENTAS */}
-                                <section className="py-20 px-4 max-w-7xl mx-auto space-y-10">
-                                    <div className="bg-gradient-to-r from-brand-deep via-brand-night to-brand-deep p-8 lg:p-12 rounded-3xl border border-brand-gold/40 shadow-2xl grid lg:grid-cols-12 gap-8 items-center">
-                                        <div className="lg:col-span-8 space-y-4">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-300 border border-green-500/30 text-[10px] font-bold uppercase tracking-wider">
-                                                <IconCheck size={12} />
+                                <section className="py-24 px-4 max-w-7xl mx-auto space-y-12">
+                                    <div className="bg-white p-10 lg:p-16 rounded-[3rem] border border-slate-200 shadow-xl shadow-brand-sky/5 grid lg:grid-cols-12 gap-12 items-center">
+                                        <div className="lg:col-span-7 space-y-6">
+                                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                                <IconCheck size={14} />
                                                 <span>Entidad Legalmente Constituida</span>
                                             </div>
-                                            <h2 className="text-3xl font-serif-custom font-bold text-white">Una misión que rinde cuentas.</h2>
-                                            <p className="text-xs sm:text-sm text-brand-ivory/80 leading-relaxed">
-                                                La **ASOCIACIÓN JUSTICIA PARA LAS NACIONES** se encuentra formalmente registrada en la Dirección de Regulación, Registro y Seguimiento de Asociaciones Civil (**DIRRSAC**) de Honduras.
+                                            <h2 className="text-4xl font-serif-custom font-bold text-brand-corporate">Una misión que rinde cuentas.</h2>
+                                            <p className="text-base text-slate-600 leading-relaxed">
+                                                La **ASOCIACIÓN JUSTICIA PARA LAS NACIONES** se encuentra formalmente registrada en la Dirección de Regulación, Registro y Seguimiento de Asociaciones Civil (**DIRRSAC**) de Honduras, garantizando transparencia total a nuestros aliados y donantes.
                                             </p>
-                                            <div className="grid sm:grid-cols-2 gap-4 pt-2 text-xs">
-                                                <div className="p-3 rounded-xl bg-black/30 border border-white/10">
-                                                    <span className="text-brand-gold font-bold block">Nº Registro DIRRSAC:</span>
-                                                    <span className="text-white font-mono">2025000170</span>
+                                            <div className="grid sm:grid-cols-2 gap-4 pt-4 text-sm">
+                                                <div className="p-4 rounded-2xl bg-brand-cloud border border-brand-sky/20 flex flex-col justify-center">
+                                                    <span className="text-brand-skyDeep font-bold text-[10px] uppercase tracking-wider mb-1">Nº Registro DIRRSAC</span>
+                                                    <span className="text-brand-corporate font-mono font-bold text-lg">2025000170</span>
                                                 </div>
-                                                <div className="p-3 rounded-xl bg-black/30 border border-white/10">
-                                                    <span className="text-brand-gold font-bold block">Fecha de Registro:</span>
-                                                    <span className="text-white font-mono">15 de Mayo de 2025</span>
+                                                <div className="p-4 rounded-2xl bg-brand-cloud border border-brand-sky/20 flex flex-col justify-center">
+                                                    <span className="text-brand-skyDeep font-bold text-[10px] uppercase tracking-wider mb-1">Fecha de Registro</span>
+                                                    <span className="text-brand-corporate font-mono font-bold text-lg">15 Mayo 2025</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="lg:col-span-4 text-center lg:text-right space-y-4">
-                                            <div className="p-6 rounded-2xl bg-brand-night border border-brand-gold/30 space-y-3">
-                                                <IconShield size={32} className="text-brand-gold mx-auto lg:ml-auto lg:mr-0" />
-                                                <h4 className="font-bold text-sm text-white">Portal de Transparencia</h4>
-                                                <p className="text-[11px] text-brand-ivory/60">Estatutos, informes de gestión y código de conducta a disposición de aliados.</p>
-                                                <button className="w-full py-2 rounded-lg bg-brand-gold/20 text-brand-gold border border-brand-gold/40 text-xs font-bold hover:bg-brand-gold hover:text-brand-night transition-colors">
+                                        <div className="lg:col-span-5">
+                                            <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-200 space-y-5 text-center lg:text-left shadow-inner">
+                                                <div className="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto lg:ml-0">
+                                                    <IconShield size={32} className="text-brand-gold" />
+                                                </div>
+                                                <h4 className="font-bold text-xl text-brand-corporate">Portal de Transparencia</h4>
+                                                <p className="text-sm text-slate-500 leading-relaxed">Estatutos, informes de gestión, uso de fondos y código de conducta a disposición pública.</p>
+                                                <button className="w-full py-3.5 rounded-xl bg-white text-brand-corporate border-2 border-slate-200 text-sm font-bold hover:border-brand-skyDeep hover:text-brand-skyDeep transition-colors shadow-sm">
                                                     Ver Documentación Legal
                                                 </button>
                                             </div>
@@ -917,51 +793,54 @@
                                 </section>
 
                                 {/* SECTION 10: APOYA Y DONACIONES */}
-                                <section id="apoya" className="py-20 px-4 max-w-7xl mx-auto space-y-10">
-                                    <div className="text-center space-y-3 max-w-2xl mx-auto">
-                                        <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Colaboración</span>
-                                        <h2 className="text-3xl sm:text-4xl font-serif-custom font-bold text-white">Sé parte de la Misión</h2>
-                                        <p className="text-xs text-brand-ivory/70">
-                                            Tus aportaciones permiten sostener las misiones en las montañas, la labor de capellanía y el auxilio humanitaria.
+                                <section id="apoya" className="py-24 px-4 max-w-7xl mx-auto space-y-12">
+                                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                                        <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Colaboración</span>
+                                        <h2 className="text-4xl sm:text-5xl font-serif-custom font-bold text-brand-corporate">Sé parte de la Misión</h2>
+                                        <p className="text-base text-slate-600">
+                                            Tus aportaciones permiten sostener las misiones en las montañas, la labor de capellanía y el auxilio humanitario constante.
                                         </p>
                                     </div>
 
-                                    <div className="grid md:grid-cols-3 gap-6">
-                                        <div className="bg-brand-deep/40 p-8 rounded-3xl border border-white/10 space-y-4 flex flex-col justify-between">
-                                            <div className="space-y-3">
-                                                <h3 className="text-xl font-serif-custom font-bold text-white">Apoya una Misión</h3>
-                                                <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                                    Contribuye con los fondos para transporte, logística, alimentos e insumos para viajes de campo específicos.
+                                    <div className="grid md:grid-cols-3 gap-8 pt-4">
+                                        <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-lg space-y-6 flex flex-col justify-between">
+                                            <div className="space-y-4">
+                                                <div className="w-12 h-12 rounded-full bg-brand-cloud flex items-center justify-center text-brand-skyDeep"><IconGlobe size={24}/></div>
+                                                <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate">Apoya una Misión</h3>
+                                                <p className="text-sm text-slate-600 leading-relaxed">
+                                                    Contribuye con fondos para transporte, logística, alimentos e insumos para viajes de campo específicos.
                                                 </p>
                                             </div>
-                                            <button className="w-full py-3 rounded-xl border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-night transition-colors text-xs font-bold">
+                                            <button className="w-full py-3.5 rounded-xl border-2 border-slate-200 text-brand-corporate hover:border-brand-skyDeep hover:text-brand-skyDeep transition-colors text-sm font-bold">
                                                 Donar para Misiones
                                             </button>
                                         </div>
 
-                                        <div className="bg-brand-deep/60 p-8 rounded-3xl border border-brand-gold/50 space-y-4 flex flex-col justify-between relative shadow-xl">
-                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-gold text-brand-night text-[10px] font-bold px-3 py-0.5 rounded-full uppercase">
-                                                Recomendado
+                                        <div className="bg-brand-corporate p-8 rounded-[2rem] border border-brand-skyDeep shadow-2xl shadow-brand-corporate/30 space-y-6 flex flex-col justify-between relative transform md:-translate-y-4">
+                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-gold text-white text-[10px] font-bold px-4 py-1 rounded-full uppercase shadow-lg tracking-wider">
+                                                Impacto Mayor
                                             </div>
-                                            <div className="space-y-3">
-                                                <h3 className="text-xl font-serif-custom font-bold text-white">Labor Permanente</h3>
-                                                <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                                    Aporte recurrente para mantener la operación institucional, publicaciones y presencia de acompañamiento continua.
+                                            <div className="space-y-4">
+                                                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-brand-sky"><IconHeart size={24}/></div>
+                                                <h3 className="text-2xl font-serif-custom font-bold text-white">Labor Permanente</h3>
+                                                <p className="text-sm text-brand-cloud/80 leading-relaxed">
+                                                    Aporte recurrente para mantener la operación institucional, centro de recursos y acompañamiento continuo.
                                                 </p>
                                             </div>
-                                            <button className="w-full py-3 rounded-xl gold-gradient-bg text-brand-night font-bold text-xs shadow-lg">
+                                            <button className="w-full py-3.5 rounded-xl bg-brand-sky text-brand-corporate hover:bg-white font-bold text-sm shadow-lg transition-colors">
                                                 Donación Recurrente
                                             </button>
                                         </div>
 
-                                        <div className="bg-brand-deep/40 p-8 rounded-3xl border border-white/10 space-y-4 flex flex-col justify-between">
-                                            <div className="space-y-3">
-                                                <h3 className="text-xl font-serif-custom font-bold text-white">Proyectos Especiales</h3>
-                                                <p className="text-xs text-brand-ivory/70 leading-relaxed">
-                                                    Patrocina la impresión de materiales de estudio, equipamiento audiovisual o asistencia a comunidades en emergencia.
+                                        <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-lg space-y-6 flex flex-col justify-between">
+                                            <div className="space-y-4">
+                                                <div className="w-12 h-12 rounded-full bg-brand-cloud flex items-center justify-center text-brand-skyDeep"><IconBook size={24}/></div>
+                                                <h3 className="text-2xl font-serif-custom font-bold text-brand-corporate">Proyectos Especiales</h3>
+                                                <p className="text-sm text-slate-600 leading-relaxed">
+                                                    Patrocina la impresión de materiales de estudio, equipamiento para campo o asistencia en emergencias.
                                                 </p>
                                             </div>
-                                            <button className="w-full py-3 rounded-xl border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-night transition-colors text-xs font-bold">
+                                            <button className="w-full py-3.5 rounded-xl border-2 border-slate-200 text-brand-corporate hover:border-brand-skyDeep hover:text-brand-skyDeep transition-colors text-sm font-bold">
                                                 Apoyar Proyecto
                                             </button>
                                         </div>
@@ -969,81 +848,154 @@
                                 </section>
 
                                 {/* INSTITUTIONAL FOOTER */}
-                                <footer className="bg-black/80 border-t border-brand-gold/20 py-16 px-4 lg:px-8 text-brand-ivory/70 text-xs">
-                                    <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-8 pb-12 border-b border-white/10">
-                                        <div className="md:col-span-5 space-y-4">
-                                            <BrandLogo size="md" />
-                                            <p className="text-xs text-brand-ivory/60 max-w-sm leading-relaxed">
+                                <footer className="bg-brand-corporate border-t-4 border-brand-sky py-16 px-4 lg:px-8 text-brand-cloud/70 text-sm">
+                                    <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 pb-12 border-b border-white/10">
+                                        <div className="md:col-span-5 space-y-6">
+                                            {/* Usamos logo oscuro adaptado a footer claro o forzamos texto blanco en footer oscuro */}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-lg bg-brand-skyDeep flex items-center justify-center border border-white/20">
+                                                    <IconGlobe className="text-white"/>
+                                                </div>
+                                                <div className="font-serif-custom font-bold text-white uppercase tracking-wider">Justicia Para Las Naciones</div>
+                                            </div>
+                                            <p className="text-xs text-brand-cloud/60 max-w-sm leading-relaxed">
                                                 Una organización dedicada a servir, acompañar y llevar esperanza a personas y naciones a través de misiones, capellanía e intercesión.
                                             </p>
-                                            <div className="text-[11px] text-brand-gold">
+                                            <div className="text-[11px] text-brand-sky font-medium">
                                                 Asociación Justicia Para Las Naciones • Registro DIRRSAC 2025000170 • Distrito Central, Honduras
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-3 space-y-2">
-                                            <h4 className="text-white font-bold font-serif-custom text-sm">Navegación</h4>
-                                            <ul className="space-y-1.5 text-brand-ivory/60">
-                                                <li><a href="#" className="hover:text-brand-gold">Quiénes Somos</a></li>
-                                                <li><a href="#" className="hover:text-brand-gold">Nuestra Labor</a></li>
-                                                <li><a href="#" className="hover:text-brand-gold">Misiones Internacionales</a></li>
-                                                <li><a href="#" className="hover:text-brand-gold">Centro de Recursos</a></li>
-                                                <li><a href="#" className="hover:text-brand-gold">Transparencia ONGD</a></li>
+                                        <div className="md:col-span-3 space-y-4">
+                                            <h4 className="text-white font-bold font-serif-custom text-base tracking-wide">Navegación</h4>
+                                            <ul className="space-y-2.5 text-xs">
+                                                <li><a href="#" className="hover:text-brand-sky transition-colors">Inicio (Home)</a></li>
+                                                <li><a href="#" className="hover:text-brand-sky transition-colors">Quiénes Somos</a></li>
+                                                <li><a href="#" className="hover:text-brand-sky transition-colors">Nuestra Labor</a></li>
+                                                <li><a href="#" className="hover:text-brand-sky transition-colors">Misiones Internacionales</a></li>
+                                                <li><a href="#" className="hover:text-brand-sky transition-colors">Centro de Recursos</a></li>
                                             </ul>
                                         </div>
 
-                                        <div className="md:col-span-4 space-y-3">
-                                            <h4 className="text-white font-bold font-serif-custom text-sm">Canales Oficiales</h4>
+                                        <div className="md:col-span-4 space-y-4">
+                                            <h4 className="text-white font-bold font-serif-custom text-base tracking-wide">Canales Oficiales</h4>
                                             <div className="flex flex-wrap gap-2 text-[11px]">
-                                                <span className="px-3 py-1 rounded bg-white/5 border border-white/10">YouTube Oficial</span>
-                                                <span className="px-3 py-1 rounded bg-white/5 border border-white/10">Facebook</span>
-                                                <span className="px-3 py-1 rounded bg-white/5 border border-white/10">Telegram</span>
-                                                <span className="px-3 py-1 rounded bg-white/5 border border-white/10">TikTok</span>
+                                                <span className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-brand-sky hover:text-brand-corporate transition-colors cursor-pointer">YouTube</span>
+                                                <span className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-brand-sky hover:text-brand-corporate transition-colors cursor-pointer">Facebook</span>
+                                                <span className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-brand-sky hover:text-brand-corporate transition-colors cursor-pointer">Telegram</span>
+                                                <span className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 hover:bg-brand-sky hover:text-brand-corporate transition-colors cursor-pointer">Odysee</span>
                                             </div>
-                                            <p className="text-[10px] text-brand-ivory/40">
-                                                Protección frente a canales no autorizados. Solo confíe en enlaces listados en esta plataforma oficial.
+                                            <p className="text-[10px] text-brand-cloud/40 pt-2 border-t border-white/10">
+                                                Protección frente a canales no autorizados. Solo confíe en enlaces listados en esta plataforma oficial ONGD.
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div className="max-w-7xl mx-auto pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] text-brand-ivory/40">
+                                    <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-medium">
                                         <div>© 2026 Asociación Justicia Para Las Naciones. Todos los derechos reservados.</div>
-                                        <div className="flex gap-4">
-                                            <a href="#" className="hover:text-brand-gold">Términos & Condiciones</a>
-                                            <a href="#" className="hover:text-brand-gold">Política de Privacidad</a>
-                                            <a href="#" className="hover:text-brand-gold">Contacto Oficial</a>
+                                        <div className="flex gap-6">
+                                            <a href="#" className="hover:text-white transition-colors">Privacidad</a>
+                                            <a href="#" className="hover:text-white transition-colors">Términos</a>
+                                            <a href="#" className="hover:text-white transition-colors">Política de Donaciones</a>
                                         </div>
                                     </div>
                                 </footer>
                             </div>
                         )}
 
-                        {/* TAB 3: ARQUITECTURA & MAPA DE NAVEGACIÓN */}
+                        {/* TAB 1: ESTRATEGIA & IDENTIDAD VISUAL (DOCUMENTACIÓN) */}
+                        {activeTab === 'executive' && (
+                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 space-y-16">
+                                <div className="text-center space-y-4 max-w-3xl mx-auto">
+                                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-brand-sky/10 text-brand-skyDeep text-xs font-bold uppercase tracking-widest border border-brand-sky/20">
+                                        Estrategia de Marca
+                                    </div>
+                                    <h1 className="text-4xl lg:text-5xl font-serif-custom font-bold text-brand-corporate">
+                                        Concepto: El Cielo y Las Nubes
+                                    </h1>
+                                    <p className="text-slate-600 text-lg leading-relaxed">
+                                        Hemos transicionado el diseño de un entorno oscuro hacia un concepto luminoso, aireado y abierto. Representa la esperanza, la visión global de la Gran Comisión y un enfoque profundamente humano y transparente.
+                                    </p>
+                                </div>
+
+                                {/* Visual Identity Kit & Palette */}
+                                <div className="bg-white rounded-[2rem] p-10 shadow-xl shadow-brand-sky/5 border border-slate-100 space-y-8">
+                                    <h2 className="text-2xl font-serif-custom font-bold text-brand-corporate flex items-center gap-3">
+                                        <span className="w-2 h-6 bg-brand-skyDeep rounded-full"></span>
+                                        Nueva Paleta de Color "Cielo Abierto"
+                                    </h2>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                                        <div className="space-y-3">
+                                            <div className="h-24 rounded-2xl bg-[#082F49] shadow-md flex items-end p-3 text-xs font-mono text-white font-bold">#082F49</div>
+                                            <div>
+                                                <div className="text-sm font-bold text-brand-corporate">Azul Corporativo</div>
+                                                <div className="text-[11px] text-slate-500 mt-1">Autoridad, textos y alto contraste.</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="h-24 rounded-2xl bg-[#0284C7] shadow-md flex items-end p-3 text-xs font-mono text-white font-bold">#0284C7</div>
+                                            <div>
+                                                <div className="text-sm font-bold text-brand-skyDeep">Azul Cielo Intenso</div>
+                                                <div className="text-[11px] text-slate-500 mt-1">Botones principales y elementos de foco.</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="h-24 rounded-2xl bg-[#38BDF8] shadow-md flex items-end p-3 text-xs font-mono text-brand-corporate font-bold">#38BDF8</div>
+                                            <div>
+                                                <div className="text-sm font-bold text-brand-sky">Cielo Claro</div>
+                                                <div className="text-[11px] text-slate-500 mt-1">Acentos, gradientes luminosos y detalles.</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="h-24 rounded-2xl bg-[#F0F9FF] shadow-inner border border-slate-200 flex items-end p-3 text-xs font-mono text-brand-corporate font-bold">#F0F9FF</div>
+                                            <div>
+                                                <div className="text-sm font-bold text-slate-700">Blanco Nube</div>
+                                                <div className="text-[11px] text-slate-500 mt-1">Fondo principal, genera amplitud y paz.</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="h-24 rounded-2xl bg-[#C6A15B] shadow-md flex items-end p-3 text-xs font-mono text-white font-bold">#C6A15B</div>
+                                            <div>
+                                                <div className="text-sm font-bold text-[#C6A15B]">Dorado Sol</div>
+                                                <div className="text-[11px] text-slate-500 mt-1">Luz, calidez y un toque de honor institucional.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 3 & 4 (Estructura y Evolución - Estilos actualizados a claros) */}
                         {activeTab === 'architecture' && (
-                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-10">
+                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 space-y-10">
                                 <div className="space-y-3">
-                                    <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Mapa de Sitio Bilingüe</span>
-                                    <h1 className="text-3xl font-serif-custom font-bold text-white">Estructura Integral de Navegación</h1>
-                                    <p className="text-xs text-brand-ivory/70 max-w-2xl">
+                                    <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Mapa de Sitio Bilingüe</span>
+                                    <h1 className="text-4xl font-serif-custom font-bold text-brand-corporate">Estructura Integral de Navegación</h1>
+                                    <p className="text-sm text-slate-600 max-w-2xl">
                                         Organización metódica de los contenidos para ofrecer una experiencia intuitiva a colaboradores, donantes e interesados en el mensaje del ministerio.
                                     </p>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {[
-                                        { title: '1. Inicio (Home)', items: ['Hero Misionero Cinematográfico', 'Nuestra Razón de Ser (AMAR)', '4 Pilares de Servicio', 'La Misión en Acción (Historias)', 'Mapa Mundial Interactivo', 'Liderazgo Fausto Zacapa', 'Recursos Destacados', 'Portal de Transparencia DIRRSAC'] },
+                                        { title: '1. Inicio (Home)', items: ['Hero Misionero Cielo', 'Nuestra Razón de Ser (AMAR)', '4 Pilares de Servicio', 'La Misión en Acción (Historias)', 'Mapa Mundial Interactivo', 'Liderazgo Fausto Zacapa', 'Recursos Destacados', 'Portal Transparencia'] },
                                         { title: '2. Quiénes Somos', items: ['Historia del Ministerio', 'Transición de Marca', 'Misión, Visión y Principios', 'Organización y Consejo', 'Biografía de Fausto Zacapa'] },
                                         { title: '3. Nuestra Labor', items: ['Misiones de Campo', 'Capellanía e Instituciones', 'Red de Oración (Pregoneros)', 'Formación y Enseñanza', 'Servicio Comunitario'] },
                                         { title: '4. Misiones Internacionales', items: ['Honduras (Sede)', 'México', 'Estados Unidos', 'Galería Fotográfica Documental', 'Próximas Salidas'] },
-                                        { title: '5. Centro de Recursos', items: ['Enseñanzas en Español', 'English Sermon Archive', 'Documentos & Guías PDF', 'Artículos Teológicos', 'Buscador con Filtros Avanzados'] },
-                                        { title: '6. Transparencia & ONGD', items: ['Registro DIRRSAC 2025000170', 'Informes Anuales de Gestión', 'Estatutos de la Asociación', 'Código de Conducta', 'Uso de Fondos'] }
+                                        { title: '5. Centro de Recursos', items: ['Enseñanzas en Español', 'English Sermon Archive', 'Documentos & Guías PDF', 'Artículos Teológicos', 'Buscador con Filtros'] },
+                                        { title: '6. Transparencia & ONGD', items: ['Registro DIRRSAC 2025000170', 'Informes de Gestión', 'Estatutos', 'Código de Conducta', 'Uso de Fondos'] }
                                     ].map((sec, idx) => (
-                                        <div key={idx} className="bg-brand-deep/40 p-6 rounded-2xl border border-white/10 space-y-3">
-                                            <h3 className="text-lg font-serif-custom font-bold text-brand-gold">{sec.title}</h3>
-                                            <ul className="space-y-2 text-xs text-brand-ivory/80">
+                                        <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                            <h3 className="text-lg font-serif-custom font-bold text-brand-skyDeep">{sec.title}</h3>
+                                            <ul className="space-y-2 text-xs text-slate-600 font-medium">
                                                 {sec.items.map((it, i) => (
                                                     <li key={i} className="flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60"></span>
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-brand-sky"></span>
                                                         <span>{it}</span>
                                                     </li>
                                                 ))}
@@ -1054,71 +1006,66 @@
                             </div>
                         )}
 
-                        {/* TAB 4: COMPARATIVA ANTES / DESPUÉS */}
                         {activeTab === 'beforeAfter' && (
-                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-10">
+                            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 space-y-10">
                                 <div className="space-y-3">
-                                    <span className="text-xs uppercase tracking-widest text-brand-gold font-bold">Evolución de Presencia Digital</span>
-                                    <h1 className="text-3xl font-serif-custom font-bold text-white">Sitio Actual vs. Nueva Propuesta ONGD</h1>
+                                    <span className="text-xs uppercase tracking-widest text-brand-skyDeep font-bold">Evolución Institucional</span>
+                                    <h1 className="text-4xl font-serif-custom font-bold text-brand-corporate">Sitio Actual vs. Nueva Plataforma</h1>
                                 </div>
 
                                 <div className="grid lg:grid-cols-2 gap-8">
                                     {/* Antes */}
-                                    <div className="bg-red-950/20 p-8 rounded-3xl border border-red-500/30 space-y-6">
-                                        <div className="flex items-center justify-between border-b border-red-500/30 pb-4">
+                                    <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-6">
+                                        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                                             <div>
-                                                <span className="text-[10px] font-bold uppercase text-red-400">Presencia Anterior</span>
-                                                <h3 className="text-xl font-serif-custom font-bold text-white">Un Misionero Para Cristo</h3>
+                                                <span className="text-[10px] font-bold uppercase text-slate-500">Presencia Anterior</span>
+                                                <h3 className="text-xl font-serif-custom font-bold text-slate-700">Un Misionero Para Cristo</h3>
                                             </div>
-                                            <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-300 text-xs font-bold">Sitio Actual (Wix)</span>
+                                            <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-bold">Sitio Actual (Wix)</span>
                                         </div>
 
-                                        <ul className="space-y-4 text-xs text-brand-ivory/80">
+                                        <ul className="space-y-4 text-sm text-slate-600">
                                             <li className="flex items-start gap-3">
-                                                <span className="text-red-400 font-bold">✕</span>
+                                                <span className="text-slate-400 font-bold">✕</span>
                                                 <span>**Enfoque personal:** Centrado principalmente en la figura individual del predicador.</span>
                                             </li>
                                             <li className="flex items-start gap-3">
-                                                <span className="text-red-400 font-bold">✕</span>
-                                                <span>**Arquitectura fragmentada:** Enlaces externos a YouTube, Facebook o PDFs en bruto sin un buscador unificado.</span>
+                                                <span className="text-slate-400 font-bold">✕</span>
+                                                <span>**Arquitectura fragmentada:** Enlaces externos a YouTube/Facebook sin biblioteca interna.</span>
                                             </li>
                                             <li className="flex items-start gap-3">
-                                                <span className="text-red-400 font-bold">✕</span>
-                                                <span>**Falta de validación legal:** No se destacaba la condición jurídica ni la rendición de cuentas institucional.</span>
-                                            </li>
-                                            <li className="flex items-start gap-3">
-                                                <span className="text-red-400 font-bold">✕</span>
-                                                <span>**Símbolos genéricos y marca de agua:** Presencia visual con marca de plataforma gratuita Wix.</span>
+                                                <span className="text-slate-400 font-bold">✕</span>
+                                                <span>**Falta de validación legal:** No se destaca la condición jurídica ONGD ni la transparencia.</span>
                                             </li>
                                         </ul>
                                     </div>
 
                                     {/* Después */}
-                                    <div className="bg-brand-deep/50 p-8 rounded-3xl border border-brand-gold/50 space-y-6 shadow-2xl">
-                                        <div className="flex items-center justify-between border-b border-brand-gold/30 pb-4">
+                                    <div className="bg-white p-8 rounded-3xl border-2 border-brand-sky shadow-xl shadow-brand-sky/10 space-y-6">
+                                        <div className="flex items-center justify-between border-b border-brand-sky/20 pb-4">
                                             <div>
-                                                <span className="text-[10px] font-bold uppercase text-brand-gold">Nueva Propuesta</span>
-                                                <h3 className="text-xl font-serif-custom font-bold text-white">Asociación Justicia Para Las Naciones</h3>
+                                                <span className="text-[10px] font-bold uppercase text-brand-skyDeep">Nueva Propuesta "Cielo Abierto"</span>
+                                                <h3 className="text-xl font-serif-custom font-bold text-brand-corporate">Asociación Justicia Para Las Naciones</h3>
                                             </div>
-                                            <span className="px-3 py-1 rounded-full bg-brand-gold text-brand-night text-xs font-bold">Plataforma ONGD</span>
+                                            <span className="px-3 py-1 rounded-full bg-brand-skyDeep text-white text-xs font-bold shadow-md">Plataforma ONGD</span>
                                         </div>
 
-                                        <ul className="space-y-4 text-xs text-brand-ivory/90">
+                                        <ul className="space-y-4 text-sm text-brand-corporate font-medium">
                                             <li className="flex items-start gap-3">
-                                                <span className="text-green-400 font-bold">✓</span>
-                                                <span>**Marca institucional sólida:** Organización que perdura con Fausto Zacapa como Fundador/Capellán.</span>
+                                                <span className="text-brand-skyDeep font-bold">✓</span>
+                                                <span>**Marca institucional global:** Organización perdurable, luminosa y orientada al servicio.</span>
                                             </li>
                                             <li className="flex items-start gap-3">
-                                                <span className="text-green-400 font-bold">✓</span>
-                                                <span>**Centro de Recursos Integrado:** Biblioteca bilingüe con filtros por idioma, formato y tema.</span>
+                                                <span className="text-brand-skyDeep font-bold">✓</span>
+                                                <span>**Centro de Recursos Integrado:** Biblioteca propia filtrable sin sacar al usuario de la web.</span>
                                             </li>
                                             <li className="flex items-start gap-3">
-                                                <span className="text-green-400 font-bold">✓</span>
-                                                <span>**Validación Legal DIRRSAC 2025000170:** Confianza total para donantes y socios internacionales.</span>
+                                                <span className="text-brand-skyDeep font-bold">✓</span>
+                                                <span>**Validación Legal DIRRSAC:** Transparencia total, fundamental para donantes internacionales.</span>
                                             </li>
                                             <li className="flex items-start gap-3">
-                                                <span className="text-green-400 font-bold">✓</span>
-                                                <span>**Identidad visual propia:** Paleta de color exclusiva (Azul Noche, Dorado, Marfil, Olivo) sin cruces genéricas.</span>
+                                                <span className="text-brand-skyDeep font-bold">✓</span>
+                                                <span>**Diseño "Cielo y Nubes":** Altamente profesional, aireado, transmitiendo paz, esperanza y claridad sin saturación oscura.</span>
                                             </li>
                                         </ul>
                                     </div>
